@@ -4,16 +4,16 @@
 #include <string.h>
 #include <limits.h>
 #include "bigint.h"
-/*
- *word DATA0[1] = {0}; word DATA1[1] = {1}; word DATA2[1] = {2};
- *word DATA3[1] = {3}; word DATA4[1] = {4}; word DATA5[1] = {5};
- *word DATA6[1] = {6}; word DATA7[1] = {7}; word DATA8[1] = {8};
- *word DATA9[1] = {9}; word DATA10[1] = {10};
- *bigint NUMS[11] = {{1, 1, DATA0},{1, 1, DATA1},{1, 1, DATA2},
- *                   {1, 1, DATA3},{1, 1, DATA4},{1, 1, DATA5},
- *                   {1, 1, DATA6},{1, 1, DATA7},{1, 1, DATA8},
- *                   {1, 1, DATA9},{1, 1, DATA10}};
- */
+
+
+word DATA0[1] = {0}; word DATA1[1] = {1}; word DATA2[1] = {2};
+word DATA3[1] = {3}; word DATA4[1] = {4}; word DATA5[1] = {5};
+word DATA6[1] = {6}; word DATA7[1] = {7}; word DATA8[1] = {8};
+word DATA9[1] = {9}; word DATA10[1] = {10};
+bigint NUMS[11] = {{1, 1, DATA0},{1, 1, DATA1},{1, 1, DATA2},
+                   {1, 1, DATA3},{1, 1, DATA4},{1, 1, DATA5},
+                   {1, 1, DATA6},{1, 1, DATA7},{1, 1, DATA8},
+                   {1, 1, DATA9},{1, 1, DATA10}};
 
 // Funtion to initialize a bigint number.
 bigint* bigint_init() {

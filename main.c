@@ -7,8 +7,8 @@ int main()
     bigint *result = bigint_init();
     bigint *result1 = bigint_init();
 
-    bigint_fromstring(b1, "1234567890");
-    bigint_fromstring(b2, "1000");
+    bigint_fromstring(b1, "12345678902342342389743298329584723931540987");
+    bigint_fromstring(b2, "2");
 
     bigint_add(result, b1, b2);
     bigint_print(result);
