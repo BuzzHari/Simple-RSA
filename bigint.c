@@ -379,6 +379,30 @@ void bigint_divide(bigint* quotient, bigint* remainder, bigint* b1, bigint* b2) 
 	bigint_deinit(quottemp);
 }
 
+void bignum_modpow(bignum* base, bignum* exponent, bignum* modulus, bignum* result) {
+	bignum *a = bignum_init(), *b = bignum_init(), *c = bignum_init();
+	bignum *discard = bignum_init(), *remainder = bignum_init();
+	bignum_copy(base, a);
+	bignum_copy(exponent, b);
+	bignum_copy(modulus, c);
+	bignum_fromint(result, 1);
+	while(bignum_greater(b, &NUMS[0])) {
+		if(b->data[0] & 1) {
+			bignum_imultiply(result, a);
+			bignum_imodulate(result, c);
+		}
+		bignum_idivide(b, &NUMS[2]);
+		bignum_copy(a, discard);
+		bignum_imultiply(a, discard);
+		bignum_imodulate(a, c);
+	}
+	bignum_deinit(a);
+	bignum_deinit(b);
+	bignum_deinit(c);
+	bignum_deinit(discard);
+	bignum_deinit(remainder);
+}
+
 /*
 void bigint_imultiply(bigint* source, bigint* mult) {
 	bigint* temp = bigint_init();

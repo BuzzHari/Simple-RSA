@@ -43,6 +43,10 @@ void bigint_remainder(bigint* source, bigint *div, bigint* remainder);
 // remainder = b1 % b2
 void bigint_divide(bigint* quotient, bigint* remainder, bigint* b1, bigint* b2);
 
+// result = base ^ exponent mod modulus
+void bigint_modpow(bigint* base, bigint* exponent, bigint* modulus, bigint* result);
+
+
 // void bigint_iadd(bigint* source, bigint* add);
 // void bigint_isubtract(bigint* source, bigint* add);
 // void bigint_imultiply(bigint* source, bigint* add);
