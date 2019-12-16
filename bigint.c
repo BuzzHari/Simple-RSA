@@ -3,7 +3,7 @@
 #include <time.h>
 #include <string.h>
 #include <limits.h>
-
+#include "bigint.h"
 /*
  *word DATA0[1] = {0}; word DATA1[1] = {1}; word DATA2[1] = {2};
  *word DATA3[1] = {3}; word DATA4[1] = {4}; word DATA5[1] = {5};
