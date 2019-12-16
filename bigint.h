@@ -1,3 +1,6 @@
+#ifndef BIGINT_H
+#define BIGINT_H
+
 #define BUF_SIZE 1024
 #define RADIX 4294967296UL
 #define HALFRADIX 2147483648UL
@@ -11,6 +14,16 @@ typedef struct _bigint {
 	int capacity;
 	word* data;
 } bigint;
+
+
+word DATA0[1] = {0}; word DATA1[1] = {1}; word DATA2[1] = {2};
+word DATA3[1] = {3}; word DATA4[1] = {4}; word DATA5[1] = {5};
+word DATA6[1] = {6}; word DATA7[1] = {7}; word DATA8[1] = {8};
+word DATA9[1] = {9}; word DATA10[1] = {10};
+extern bigint NUMS[11] = {{1, 1, DATA0},{1, 1, DATA1},{1, 1, DATA2},
+                   {1, 1, DATA3},{1, 1, DATA4},{1, 1, DATA5},
+                   {1, 1, DATA6},{1, 1, DATA7},{1, 1, DATA8},
+                   {1, 1, DATA9},{1, 1, DATA10}};
 
 bigint* bigint_init();
 void bigint_deinit(bigint* b);
@@ -46,7 +59,12 @@ void bigint_divide(bigint* quotient, bigint* remainder, bigint* b1, bigint* b2);
 // result = base ^ exponent mod modulus
 void bigint_modpow(bigint* base, bigint* exponent, bigint* modulus, bigint* result);
 
+// result = gcd(b1, b2)
+void bigint_gcd(bigint* b1, bigint* b2, bigint* result);
 
+// result = a^-1 mod m
+void bigint_inverse(bigint* a, bigint* m, bigint* result);
+#endif
 // void bigint_iadd(bigint* source, bigint* add);
 // void bigint_isubtract(bigint* source, bigint* add);
 // void bigint_imultiply(bigint* source, bigint* add);
