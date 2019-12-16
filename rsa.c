@@ -11,18 +11,20 @@ int main(){
     
     //int i, bytes, len;
 	bigint *p = bigint_init();
-    bigint *q = biigint_init(); 
+    bigint *q = bigint_init(); 
     bigint *n = bigint_init();
 	bigint *phi = bigint_init(); 
-    bigint *e = bigint_init();
-    bigint *d = bigint_init();
+    //bigint *e = bigint_init();
+    //bigint *d = bigint_init();
 	//bigint *bbytes = bigint_init(), *shift = bigint_init();
 	bigint *temp1 = bigint_init(), *temp2 = bigint_init();
 
-	bigint *encoded;
-	int *decoded;
-	char *buffer;
-	FILE* f;
+    /*
+	 *bigint *encoded;
+	 *int *decoded;
+	 *char *buffer;
+	 *FILE* f;
+     */
 
 	srand(time(NULL));
 
@@ -52,15 +54,17 @@ int main(){
 	printf(" ... ");
 	getchar();
 
-	exp_gen(phi, e, EXP_MAX);
-	printf("Chose public exponent, e = ");
-	bigint_print(e);
-	printf("\nPublic key is (");
-	bigint_print(e);
-	printf(", ");
-	bigint_print(n);
-	printf(") ... ");
-	getchar();
+    /*
+	 *exp_gen(phi, e, EXP_MAX);
+	 *printf("Chose public exponent, e = ");
+	 *bigint_print(e);
+	 *printf("\nPublic key is (");
+	 *bigint_print(e);
+	 *printf(", ");
+	 *bigint_print(n);
+	 *printf(") ... ");
+	 *getchar();
+     */
 
     /*
 	 *bigint_inverse(e, phi, d);

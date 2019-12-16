@@ -30,6 +30,7 @@ void bigint_copy(bigint* source, bigint* dest);
 void bigint_fromstring(bigint* b, char* string);
 void bigint_fromint(bigint* b, unsigned int num);
 void bigint_print(bigint* b);
+void bigint_mod(bigint* result, bigint *num1, bigint *num2);
 int bigint_equal(bigint* b1, bigint* b2);
 int bigint_greater(bigint* b1, bigint* b2);
 int bigint_less(bigint* b1, bigint* b2);

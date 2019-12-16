@@ -102,6 +102,8 @@ void bigint_print(bigint* b) {
     printf("\n");
 }
 
+// 1 bi == b2
+// else 0.
 int bigint_equal(bigint* b1, bigint* b2) {
 	int i;
 	if(bigint_iszero(b1) && bigint_iszero(b2)) return 1;
@@ -478,3 +480,16 @@ void bigint_inverse(bigint* a, bigint* m, bigint* result) {
 	bigint_deinit(temp1);
 	bigint_deinit(temp2);
 }
+
+//result = num1 % num2
+void bigint_mod(bigint *result, bigint *num1, bigint *num2){
+    bigint *q = bigint_init();
+    bigint *r = bigint_init();
+
+    bigint_divide(q, r, num1, num2);
+    bigint_copy(r, result);
+
+    bigint_deinit(q);
+    bigint_deinit(r);
+}
+
