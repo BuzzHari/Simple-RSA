@@ -89,6 +89,7 @@ bigInt* bigIntMul(bigInt*, bigInt*);
 //Try finding a proper divison algo, because repeated subtraction 
 //will be shit slow.
 bigInt* bigIntDiv(bigInt*, bigInt*);
+bigInt* bigIntLongDiv(bigInt*, bigInt*);
 
 //Should be easy, just call mull in a loop.
 bigInt* bigIntPow(bigInt*, bigInt*);

@@ -137,43 +137,7 @@ int bigIntCompare(bigInt *num1, bigInt *num2){
     return 0;
 }
 
-bigInt* getFirstHalf(bigInt *num){
-    if(num == NULL){
-        printf("getFirstHalf: NaN\n");
-        return NULL;
-    }
 
-    bigInt* halfNum = (bigInt*) malloc(sizeof(bigInt)*1);
-    halfNum->num = (char*) malloc(sizeof(char)*(num->len/2));
-    halfNum->len = num->len/2;
-    long long int i = 0;
-    while(i < halfNum->len){
-        halfNum->num[i] = num->num[i];
-        i++;
-    }
-    return halfNum;
-}
-
-
-bigInt* getSecondHalf(bigInt *num){
-    if(num == NULL){
-        printf("getSecondHalf: NaN\n");
-        return NULL;
-    }
-
-    bigInt* halfNum = (bigInt*) malloc(sizeof(bigInt)*1);
-    halfNum->num = (char*) malloc(sizeof(char)*(num->len/2));
-    halfNum->len = num->len/2;
-
-    long long int i = halfNum->len;
-    long long int j = 0;
-    while(i < num->len){
-        halfNum->num[j] = num->num[i];
-        j++;
-        i++;
-    }
-    return halfNum;
-}
 
 bigInt* bigIntIncrement(bigInt *num){
     if( num == NULL){
@@ -457,19 +421,6 @@ bigInt* bigIntPow(bigInt* num1, bigInt* num2)
         return result;
 	}
 
-    // SOME ALGORITHM I FOUND ONLINE, PROBABLY MORE EFFICIENT BUT I DIDN'T UNDERSTAND IT (line 462 - 473)
-
-	// if ( ( num2[num2.size() - 1] - '0' ) & 1 )
-	// {
-	// 	string temp = BigPow( num1, BigDiv( num2, "2" ) );
-	// 	return BigMul( BigMul( num1, temp ), temp );
-	// }
-	// else
-	// {
-	// 	string temp = BigPow( num1, BigDiv( num2, "2" ) );
-	// 	return BigMul( temp, temp );
-	// }
-
     result->num = num1->num;
     result->len = num1->len;
 
@@ -488,153 +439,26 @@ bigInt* bigIntPow(bigInt* num1, bigInt* num2)
 }
 
 
-//Karatsuba implementation
-bigInt* bigIntFastMul(bigInt* num1, bigInt* num2){
-
-    if(num1 == NULL || num2 == NULL){
-        printf("NaN\n");
+bigInt* bigIntLongDiv(bigInt *divisor, bigInt *dividend){
+    
+    if(divisor == NULL || dividend == NULL)
         return NULL;
-    }
     
-    //Length of both the numbers should be the same.
-    long long int len = num1->len;
-    int p_flag = -1;
-    /*if(num1->len > num2->len){
-        addZeroPadding(num2, num1->len - num2->len);
-        len = num1->len;
-        p_flag = 2;
-    }
-    else if(num1->len < num2->len){
-        addZeroPadding(num1, num2->len - num2->len);
-        len = num2->len;
-        p_flag = 1;
-    }*/
-    
-    //making sure that length in always even.
-    /*if(len%2 != 0){
-        addZeroPadding(num1, 1);
-        addZeroPadding(num2, 1);
-        p_flag = 3;
-    }*/
+    bigInt *result = (bigInt*) malloc(sizeof(bigInt)*1);
+    result->num = (char*) calloc(dividend->len, sizeof(char));
+    result->len = dividend->len;
+   
 
-    //bigInt *result = (bigInt*) malloc(sizeof(bigInt)*1);
-    bigInt *result;
-    result = executeKaratsuba(num1,num2);
-    
-    if(p_flag == 1)
-        removeZeroPadding(num1);
-    else if(p_flag == 2)
-        removeZeroPadding(num2);
-    else if(p_flag == 3){
-        removeZeroPadding(num1);
-        removeZeroPadding(num2);
+    //If numerator is smaller than dividend.
+    //Return 0.
+    if(bigIntCompare(divisor, dividend) == -1){
+        result->num = 0;
+        result->len = 1;
+        return result;
     }
-    
-    return result;
+
+
 }
 
 
-bigInt* karaMul(bigInt *num1, bigInt *num2){
-    bigInt *result = (bigInt*) malloc(sizeof(bigInt));
-    result->num = (char*) calloc(2, sizeof(char));
-    result->len = 2;
-    
-    char temp = num1->num[0] * num2->num[0];
-    result->num[1] = temp % 10;
-    result->num[0] = temp / 10;
-    if(result->num[0] == 0)
-        removeZeroPadding(result);
-    return result;
-}
 
-bigInt* karaAdd(bigInt *num1, bigInt *num2){
-    bigInt *result = (bigInt*) malloc(sizeof(bigInt));
-    result->num = (char*) calloc(num1->len + 1, sizeof(char));
-    result->len = 0;
-
-    int i, temp = 0;
-    for (i = num1->len - 1; i >= 0; i--){
-        temp = num1->num[i] + num2->num[i] + temp / 10;
-        result->num[i + 1] = temp % 10;
-    }
-    result->num[++i] = temp / 10;
-    result->len = num1->len + 1;
-
-    if(result->num[0] == 0)
-        removeZeroPadding(result);
-    return result;
-}
-
-bigInt* executeKaratsuba(bigInt *num1, bigInt *num2){
-
-    if(num1->len == 1){
-        return karaMul(num1, num2);
-    }
-
-    //Making sure that the length of both the
-    //numbers is the same.
-    if(num1->len > num2->len){
-        addZeroPadding(num2, num1->len - num2->len);
-    }
-    else if(num1->len < num2->len){
-        addZeroPadding(num1, num2->len - num2->len);
-    }
-    
-    //Making sure that length of both numbers is even.
-    if(num1->len % 2 != 0){
-        addZeroPadding(num1, 1);
-        addZeroPadding(num2, 1);
-    }
-    
-    long long int m = num1->len / 2;
-    
-    bigInt *a1 = getFirstHalf(num1);
-    bigInt *a2 = getSecondHalf(num1);
-    
-    bigInt *b1 = getFirstHalf(num2);
-    bigInt *b2 = getSecondHalf(num2);
-    
-    
-    bigInt *p1 = executeKaratsuba(a1, b1);
-    bigInt *p2 = executeKaratsuba(a2, b2);
-    
-    /*printf("a1:");
-    bigIntPrint(a1);
-    printf("a2:");
-    bigIntPrint(a2);
-    printf("b1:"); 
-    bigIntPrint(b1);
-    printf("b2:"); 
-    bigIntPrint(b2);*/
-    bigInt *sum1 = bigIntAdd(a1, a2);
-    bigInt *sum2 = bigIntAdd(b1, b2);
-    bigInt *p3 = executeKaratsuba(sum1, sum2);
-    
-    bigInt *temp;
-    //p4 = p3-p2-p1
-    temp = bigIntSub(p3,p2);
-    bigInt *p4 = bigIntSub(temp, p1);
-
-    deallocate(temp);
-    
-    addZeroPaddingEnd(p1, 2*m);
-    addZeroPaddingEnd(p4, m);
-
-    
-    temp = bigIntAdd(p1, p4);
-    bigInt *p5 = bigIntAdd(temp, p2);
-
-    deallocate(temp);
-    deallocate(a1);
-    deallocate(a2);
-    deallocate(b1);
-    deallocate(b2);
-    deallocate(sum1);
-    deallocate(sum2);
-    deallocate(p1);
-    deallocate(p2);
-    deallocate(p3);
-    deallocate(p4);
-    
-    return p5;
-}
