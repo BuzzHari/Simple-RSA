@@ -46,6 +46,11 @@ void bigint_divide(bigint* quotient, bigint* remainder, bigint* b1, bigint* b2);
 // result = base ^ exponent mod modulus
 void bigint_modpow(bigint* base, bigint* exponent, bigint* modulus, bigint* result);
 
+// result = gcd(b1, b2)
+void bigint_gcd(bigint* b1, bigint* b2, bigint* result);
+
+// result = a^-1 mod m
+void bigint_inverse(bigint* a, bigint* m, bigint* result);
 
 // void bigint_iadd(bigint* source, bigint* add);
 // void bigint_isubtract(bigint* source, bigint* add);

@@ -47,11 +47,11 @@ void bigint_copy(bigint* source, bigint* dest) {
 	memcpy(dest->data, source->data, dest->length * sizeof(word));
 }
 
+// Function to convert a string of (only)numbers to bigint
 void bigint_fromstring(bigint* b, char* string) {
 	int i, len = 0;
-	while(string[len] != '\0') len++; /* Find string length */
+	while(string[len] != '\0') len++;
 	for(i = 0; i < len; i++) {
-		// if(i != 0) bigint_imultiply(b, &NUMS[10]); /* Base 10 multiply */
         if (i != 0)
         {
             bigint *result = bigint_init();
@@ -84,7 +84,6 @@ void bigint_print(bigint* b) {
 	else {
 		bigint_copy(b, copy);
 		while(bigint_isnonzero(copy)) {
-			// bigint_idivider(copy, &NUMS[10], remainder);
             bigint *result = bigint_init();
             bigint_divide(result, remainder, copy, &NUMS[10]);
             bigint_copy(result, copy);
@@ -158,14 +157,14 @@ void bigint_add(bigint* result, bigint* b1, bigint* b2) {
 		sum = carry;
 		if(i < b1->length) sum += b1->data[i];
 		if(i < b2->length) sum += b2->data[i];
-		result->data[i] = sum; /* Already taken mod 2^32 by unsigned wrap around */
+		result->data[i] = sum;
 
 		if(i < b1->length) {
-			if(sum < b1->data[i]) carry = 1; /* Result must have wrapped 2^32 so carry bit is 1 */
+			if(sum < b1->data[i]) carry = 1;
 			else carry = 0;
 		}
 		else {
-			if(sum < b2->data[i]) carry = 1; /* Result must have wrapped 2^32 so carry bit is 1 */
+			if(sum < b2->data[i]) carry = 1;
 			else carry = 0;
 		}
 	}
@@ -187,7 +186,7 @@ void bigint_subtract(bigint* result, bigint* b1, bigint* b2) {
 	}
 	for(i = 0; i < b1->length; i++) {
 		temp = carry;
-		if(i < b2->length) temp = temp + b2->data[i]; /* Auto wrapped mod RADIX */
+		if(i < b2->length) temp = temp + b2->data[i];
 		diff = b1->data[i] - temp;
 		if(temp > b1->data[i]) carry = 1;
 		else {
@@ -208,7 +207,7 @@ void bigint_subtract(bigint* result, bigint* b1, bigint* b2) {
 void bigint_multiply(bigint* result, bigint* b1, bigint* b2) {
 	int i, j, k;
 	word carry, temp;
-	unsigned long long int prod; /* Long for intermediate product... this is not portable and should probably be changed */
+	unsigned long long int prod;
 	if(b1->length + b2->length > result->capacity) {
 		result->capacity = b1->length + b2->length;
 		result->data = realloc(result->data, result->capacity * sizeof(word));
@@ -217,21 +216,20 @@ void bigint_multiply(bigint* result, bigint* b1, bigint* b2) {
 	
 	for(i = 0; i < b1->length; i++) {
 		for(j = 0; j < b2->length; j++) {
-			prod = (b1->data[i] * (unsigned long long int)b2->data[j]) + (unsigned long long int)(result->data[i+j]); /* This should not overflow... */
+			prod = (b1->data[i] * (unsigned long long int)b2->data[j]) + (unsigned long long int)(result->data[i+j]);
 			carry = (word)(prod / RADIX);
 			
-			/* Add carry to the next word over, but this may cause further overflow.. propogate */
 			k = 1;
 			while(carry > 0) {
 				temp = result->data[i+j+k] + carry;
 				if(temp < result->data[i+j+k]) carry = 1;
 				else carry = 0;
-				result->data[i+j+k] = temp; /* Already wrapped in unsigned arithmetic */
+				result->data[i+j+k] = temp;
 				k++;
 			}
 			
-			prod = (result->data[i+j] + b1->data[i] * (unsigned long long int)b2->data[j]) % RADIX; /* Again, should not overflow... */
-			result->data[i+j] = prod; /* Add */
+			prod = (result->data[i+j] + b1->data[i] * (unsigned long long int)b2->data[j]) % RADIX;
+			result->data[i+j] = prod;
 		}
 	}
 	if(b1->length + b2->length > 0 && result->data[b1->length + b2->length - 1] == 0) result->length = b1->length + b2->length - 1;
@@ -252,15 +250,15 @@ void bigint_divide(bigint* quotient, bigint* remainder, bigint* b1, bigint* b2) 
 	int n, m, i, j, length = 0;
 	unsigned long long factor = 1;
 	unsigned long long gquot, gtemp, grem;
-	if(bigint_less(b1, b2)) { /* Trivial case, b1/b2 = 0 iff b1 < b2. */
+	if(bigint_less(b1, b2)) {
 		quotient->length = 0;
 		bigint_copy(b1, remainder);
 	}
-	else if(bigint_iszero(b1)) { /* 0/x = 0.. assuming b2 is nonzero */
+	else if(bigint_iszero(b1)) {
 		quotient->length = 0;
 		bigint_fromint(remainder, 0);
 	}
-	else if(b2->length == 1) { /* Division by a single limb means we can do simple division */
+	else if(b2->length == 1) {
 		if(quotient->capacity < b1->length) {
 			quotient->capacity = b1->length;
 			quotient->data = realloc(quotient->data, quotient->capacity * sizeof(word));
@@ -275,8 +273,8 @@ void bigint_divide(bigint* quotient, bigint* remainder, bigint* b1, bigint* b2) 
 		bigint_fromint(remainder, carry);
 		quotient->length = length;
 	}
-	else { /* Long division is neccessary */
-		n = b1->length + 1;
+	else {
+        n = b1->length + 1;
 		m = b2->length;
 		if(quotient->capacity < n - m) {
 			quotient->capacity = n - m;
@@ -284,12 +282,8 @@ void bigint_divide(bigint* quotient, bigint* remainder, bigint* b1, bigint* b2) 
 		}
 		bigint_copy(b1, b1copy);
 		bigint_copy(b2, b2copy);
-		/* Normalize.. multiply by the divisor by 2 until MSB >= HALFRADIX. This ensures fast
-		 * convergence when guessing the quotient below. We also multiply the dividend by the
-		 * same amount to ensure the result does not change. */
 		while(b2copy->data[b2copy->length - 1] < HALFRADIX) {
 			factor *= 2;
-			// bigint_imultiply(b2copy, &NUMS[2]);
             bigint* result = bigint_init();
             bigint_multiply(result, b2copy, &NUMS[2]);
             bigint_copy(result, b2copy);
@@ -297,14 +291,11 @@ void bigint_divide(bigint* quotient, bigint* remainder, bigint* b1, bigint* b2) 
 		}
 		if(factor > 1) {
 			bigint_fromint(temp, factor);
-			// bigint_imultiply(b1copy, temp);
             bigint* result = bigint_init();
             bigint_multiply(result, b1copy, temp);
             bigint_copy(result, b1copy);
             bigint_deinit(result);
 		}
-		/* Ensure the dividend is longer than the original (pre-normalized) divisor. If it is not
-		 * we introduce a dummy zero word to artificially inflate it. */
 		if(b1copy->length != n) {
 			b1copy->length++;
 			if(b1copy->length > b1copy->capacity) {
@@ -314,7 +305,6 @@ void bigint_divide(bigint* quotient, bigint* remainder, bigint* b1, bigint* b2) 
 			b1copy->data[n - 1] = 0;
 		}
 		
-		/* Process quotient by long division */
 		for(i = n - m - 1; i >= 0; i--) {
 			gtemp = RADIX * b1copy->data[i + m] + b1copy->data[i + m - 1];
 			gquot = gtemp / b2copy->data[m - 1];
@@ -339,14 +329,12 @@ void bigint_divide(bigint* quotient, bigint* remainder, bigint* b1, bigint* b2) 
 				if(temp3->data[j] != 0) temp3->length = j + 1;
 			}
 			if(bigint_less(temp3, temp2)) {
-				// bigint_iadd(temp3, b2copy);
                 bigint* result = bigint_init();
                 bigint_add(result, temp3, b2copy);
                 bigint_copy(result, temp3);
                 bigint_deinit(result);
 				gquot--;
 			}
-			// bigint_isubtract(temp3, temp2);
             bigint* result = bigint_init();
             bigint_subtract(result, temp3, temp2);
             bigint_copy(result, temp3);
@@ -379,74 +367,114 @@ void bigint_divide(bigint* quotient, bigint* remainder, bigint* b1, bigint* b2) 
 	bigint_deinit(quottemp);
 }
 
-void bignum_modpow(bignum* base, bignum* exponent, bignum* modulus, bignum* result) {
-	bignum *a = bignum_init(), *b = bignum_init(), *c = bignum_init();
-	bignum *discard = bignum_init(), *remainder = bignum_init();
-	bignum_copy(base, a);
-	bignum_copy(exponent, b);
-	bignum_copy(modulus, c);
-	bignum_fromint(result, 1);
-	while(bignum_greater(b, &NUMS[0])) {
+void bigint_gcd(bigint* b1, bigint* b2, bigint* result) {
+	bigint *a = bigint_init(), *b = bigint_init(), *remainder = bigint_init();
+	bigint *temp = bigint_init(), *discard = bigint_init();
+	bigint_copy(b1, a);
+	bigint_copy(b2, b);
+	while(!bigint_equal(b, &NUMS[0])) {
+		bigint_copy(b, temp);
+        bigint *temp1 = bigint_init();
+        bigint *temp2 = bigint_init();
+        bigint_divide(temp1, temp2, a, b);
+        bigint_copy(temp2, a);
+		bigint_copy(a, b);
+		bigint_copy(temp, a);
+    	bigint_deinit(temp1);
+	    bigint_deinit(temp2);
+    }
+	bigint_copy(a, result);
+	bigint_deinit(a);
+	bigint_deinit(b);
+	bigint_deinit(remainder);
+	bigint_deinit(temp);
+	bigint_deinit(discard);
+}
+
+void bigint_modpow(bigint* base, bigint* exponent, bigint* modulus, bigint* result) {
+	bigint *a = bigint_init(), *b = bigint_init(), *c = bigint_init();
+	bigint *discard = bigint_init(), *remainder = bigint_init();
+	bigint_copy(base, a);
+	bigint_copy(exponent, b);
+	bigint_copy(modulus, c);
+	bigint_fromint(result, 1);
+    bigint *temp = bigint_init();
+    bigint *temp1 = bigint_init();
+	while(bigint_greater(b, &NUMS[0])) {
 		if(b->data[0] & 1) {
-			bignum_imultiply(result, a);
-			bignum_imodulate(result, c);
+            bigint_multiply(temp, result, a);
+            bigint_copy(temp, result);
+
+            bigint_divide(temp, temp1, result, c);
+            bigint_copy(temp1, result);
+
+            
 		}
-		bignum_idivide(b, &NUMS[2]);
-		bignum_copy(a, discard);
-		bignum_imultiply(a, discard);
-		bignum_imodulate(a, c);
+        bigint *temp = bigint_init();
+        bigint *temp1 = bigint_init();
+		
+        bigint_divide(temp, temp1, b, &NUMS[2]);
+        bigint_copy(temp, b);
+
+		bigint_copy(a, discard);
+
+        bigint_multiply(temp, a, discard);
+        bigint_copy(temp, a);
+
+        bigint_divide(temp, temp1, a, c);
+        bigint_copy(temp1, a);
+        
+        bigint_deinit(temp);
+        bigint_deinit(temp1);
+
 	}
-	bignum_deinit(a);
-	bignum_deinit(b);
-	bignum_deinit(c);
-	bignum_deinit(discard);
-	bignum_deinit(remainder);
+	bigint_deinit(a);
+	bigint_deinit(b);
+	bigint_deinit(c);
+	bigint_deinit(discard);
+	bigint_deinit(remainder);
 }
 
-/*
-void bigint_imultiply(bigint* source, bigint* mult) {
-	bigint* temp = bigint_init();
-	bigint_multiply(temp, source, mult);
-	bigint_copy(temp, source);
-	bigint_deinit(temp);
-}
+void bigint_inverse(bigint* a, bigint* m, bigint* result) {
+	bigint *remprev = bigint_init(), *rem = bigint_init();
+	bigint *auxprev = bigint_init(), *aux = bigint_init();
+	bigint *rcur = bigint_init(), *qcur = bigint_init(), *acur = bigint_init();
 
-void bigint_imodulate(bigint* source, bigint* modulus) {
-	bigint *q = bigint_init(), *r = bigint_init();
-	bigint_divide(q, r, source, modulus);
-	bigint_copy(r, source);
-	bigint_deinit(q);
-	bigint_deinit(r);
-}
+    bigint *temp1 = bigint_init();
+    bigint *temp2 = bigint_init();
+	
+	bigint_copy(m, remprev);
+	bigint_copy(a, rem);
+	bigint_fromint(auxprev, 0);
+	bigint_fromint(aux, 1);
+	while(bigint_greater(rem, &NUMS[1])) {
+		bigint_divide(qcur, rcur, remprev, rem);
+		bigint_subtract(acur, m, qcur);
+        
+        bigint_multiply(temp1, acur, aux);
+        bigint_copy(temp1, acur);
 
-void bigint_idivide(bigint *source, bigint *div) {
-	bigint *q = bigint_init(), *r = bigint_init();
-	bigint_divide(q, r, source, div);
-	bigint_copy(q, source);
-	bigint_deinit(q);
-	bigint_deinit(r);
-}
+        bigint_add(temp1, acur, auxprev);
+        bigint_copy(temp1, acur);
 
-void bigint_idivider(bigint* source, bigint* div, bigint* remainder) {
-	bigint *q = bigint_init(), *r = bigint_init();
-	bigint_divide(q, r, source, div);
-	bigint_copy(q, source);
-	bigint_copy(r, remainder);
-	bigint_deinit(q);
-	bigint_deinit(r);
+        bigint_divide(temp1, temp2, acur, m);
+        bigint_copy(temp2, acur);
+		
+		bigint_copy(rem, remprev);
+		bigint_copy(aux, auxprev);
+		bigint_copy(rcur, rem);
+		bigint_copy(acur, aux);
+	}
+	
+	bigint_copy(acur, result);
+	
+	bigint_deinit(remprev);
+	bigint_deinit(rem);
+	bigint_deinit(auxprev);
+	bigint_deinit(aux);
+	bigint_deinit(rcur);
+	bigint_deinit(qcur);
+	bigint_deinit(acur);
+	bigint_deinit(temp1);
+	bigint_deinit(temp2);
 }
-
-void bigint_isubtract(bigint* source, bigint* sub) {
-	bigint* temp = bigint_init();
-	bigint_subtract(temp, source, sub);
-	bigint_copy(temp, source);
-	bigint_deinit(temp);
-}
-
-void bigint_iadd(bigint* source, bigint* add) {
-	bigint* temp = bigint_init();
-	bigint_add(temp, source, add);
-	bigint_copy(temp, source);
-	bigint_deinit(temp);
-}
-*/
