@@ -5,7 +5,7 @@
 int primality_check(bigint *num, int acc);
 int miller_rabin(int a, bigint *n);
 void prime_gen(int digits, bigint *prime);
-//void exp_gen(bigint *phi, bigint *exp, int);
+void exp_gen(bigint *phi, bigint *exp, int);
 
 //bignum* encode();
 //bignum* decode();
@@ -110,3 +110,22 @@ int primality_check(bigint *num, int acc){
 	return 1;
 
 }
+
+
+void exp_gen(bigint* phi, bigint* result, int n) {
+	bigint* gcd = bigint_init();
+	int e = rand() % n;
+	while(1) {
+		bigint_fromint(result, e);
+		bigint_gcd(result, phi, gcd);
+		if(bigint_equal(gcd, &NUMS[1])) {
+			bigint_deinit(gcd);
+			return;
+		}
+		e = (e + 1) % n;
+		if(e <= 2) 
+            e = 3;
+	}
+}
+
+
